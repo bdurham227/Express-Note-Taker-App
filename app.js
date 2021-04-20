@@ -11,24 +11,43 @@ app.use(express.static('public'));
 
 
 //read and parse db.json 
-const notes = JSON.parse(fs.readFileSync(`${__dirname}/db/db.json`));
+
 
 
 
 
 //-----2) Routes-----
-//get all notes
+//get request sends notes.html
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
-
-app.get('/api/v1/notes', (req, res) => {
-    res.sendFile(paht.join(__dirname, 'db/db.json'));
-})
-
+//get request send index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
 });
+//get request send back stored json in db
+app.get('/api/v1/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, 'db/db.json'));
+})
+//create request
+app.post('/notes', (req, res) => {
+    const notes = JSON.parse(fs.readFileSync(`${__dirname}/db/db.json`));
+    const newTitle = notes[notes.length - 1].title + 1;
+    const noteLength = notes.length.toString();
+    const newNote = Object.assign({ title: newTitle, id: noteLength}, req.body);
+    notes.push(newNote);
+    fs.writeFile(`${__dirname}/db/db.json`, JSON.stringify(notes), err => {
+        res.status(201).json({
+            status: 'success',
+            data: {
+                notes: newNote
+            }
+        })
+    })
+})
+
+
+
 
 
 
