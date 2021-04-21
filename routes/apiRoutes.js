@@ -1,41 +1,24 @@
+const fs = require('fs');
+const uuid = require('uuid');
+const express = require('express');
 
-// const fs = require('fs');
-// const path = require('path');
+const notes = JSON.parse(fs.readFileSync(`${__dirname}/../db/db.json`));
 
-// exports.getAllNotes = (req, res) => {
-//     res.status(200).json({
-//         status: 'success',
-//         results: notes.length,
-//         data: {
-//             notes
-//         }
-//     })
-// }
-// // exports.getOneNote = (req, res) => {
-// //     console.log(req.params);
-// //     co
-// // }
+module.exports = (app) => {
+    app.get('/api/notes', (req, res) => res.json(notes));
 
-
-// exports.createNote = (req, res) => {
-//     console.log(req.body);
-//     let newTitle = notes[notes.length - 1].title + 1;
-//     let newNote = Object.assign({ title: newTitle}, req.body);
-//     notes.push(newNote);
-//     fs.writeFile(`${__dirname}/db/db.json`, JSON.stringify(notes), err => {
-//         res.status(201).json({
-//             status: 'success',
-//             data: {
-//                 notes: newNote
-//             }
-//         });
-//     });
-// }
-
-
-
-
-
-// // const deleteNotes = (req, res) => {
-// //     if (req)
-// // }
+    app.post('/api/notes', (req, res) => {
+        const newTitle = notes[notes.length -1 ].title + 1;
+        const newId = uuid.v4();
+        const newNote = Object.assign({ title: newTitle, id: newId }, req.body);
+        notes.push(newNote);
+        fs.writeFile(`${__dirname}/db/db.json`, JSON.stringify(notes), err => {
+            res.status(200).json({
+                status: 'success',
+                data: {
+                    notes: newNote
+                }
+            });
+        });
+    })
+}
