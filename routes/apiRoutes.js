@@ -1,12 +1,8 @@
 const fs = require('fs');
-const path = require('path');
-const uuid = require('uuid');
 
-
-// const notes = JSON.parse(fs.readFileSync(`${__dirname}/../db/db.json`));
 
 module.exports = (app) => {
-    let notes = JSON.parse(fs.readFileSync(`${__dirname}/../db/db.json`))
+    const notes = JSON.parse(fs.readFileSync(`${__dirname}/../db/db.json`))
 
     app.get('/api/notes', (req, res) => res.json(notes))
 
@@ -26,21 +22,19 @@ module.exports = (app) => {
             })
         })
     })
-    app.delete('/api/notes/:id', (req, res) => {
-        fs.readFileSync('db/db.json');
-        const deletedNote = notes.find((note) => note.id === Number(req.params.id));
+    
 
-        if (!deletedNote) {
-            return res.status(400).json({ 
-                status: 'fail',
-                message: `could not find find that ${deletedNote}`
-            })
-        }
-        const newNoteDb = notes.filter((note) => note.id !== Number(req.params.id));
-        fs.writeFile('db/db.json', JSON.stringify(newNoteDb), err => {
-            if (err) throw err;
+    app.delete('/api/notes/:id', (req, res) => {
+        let noteDb = JSON.parse(fs.readFileSync('db/db.json'));
+        let noteId = req.params.id.toString();
+        console.log(noteId);
+
+        noteDb = noteDb.filter(note => note.id != noteId);
+
+        fs.writeFile('db/db.json', JSON.stringify(noteDb), err => {
+    
+            return res.json(noteDb);
         })
-        return res.sendFile(path.join(__dirname, '/../db/db.json'));
     })
 
 
