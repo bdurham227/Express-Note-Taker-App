@@ -11,20 +11,26 @@ module.exports = (app) => {
     //make a post request to add a new note to the database.
     //create an key/value pairs for a new note and used Object.assign() to easily create an object
     app.post('/api/notes', (req, res) => {
-        const  noteId  = notes.length;
-        const newTitle = req.body.title;
-        const newNote = Object.assign({ id: noteId, title: newTitle, text: req.body.text });
+        let noteId  = notes.length;
+        let newTitle = req.body.title;
+        // const newNote = Object.assign({ id: noteId, title: newTitle, text: req.body.text });
+        let newNote = {
+            id: noteId,
+            title: newTitle,
+            text: req.body.text
+        }
         //push new note into db.json array of objects
         notes.push(newNote);
         //write new note to db.json file
-        fs.writeFile(`${__dirname}/../db/db.json`, JSON.stringify(notes), err => {
-            res.status(201).json({
-                status: 'success',
-                data: {
-                    notes: newNote
-                }
-            })
+        fs.writeFile(`${__dirname}/../db/db.json`, JSON.stringify(notes), () => {
+            // res.status(201).json({
+            //     status: 'success',
+            //     data: {
+            //         notes: newNote
+            //     }
+            // })
         })
+        return res.json(notes.slice(-1));
     })
     
     //still feels broken ish? in its current state parse data stored in db.json and uses toString() method bc without it, a data buffer is returned
@@ -33,14 +39,16 @@ module.exports = (app) => {
     app.delete('/api/notes/:id', (req, res) => {
         let noteDb = JSON.parse(fs.readFileSync('db/db.json'));
         let noteId = req.params.id.toString();
-        console.log(noteId);
+        // console.log(noteId);
 
         noteDb = noteDb.filter(note => note.id != noteId);
+        // noteDb = noteDb.splice(note => note.id != noteId);
+
 
         fs.writeFile('db/db.json', JSON.stringify(noteDb), err => {
     
-            return res.json(noteDb);
         })
+        res.json(noteDb);
     })
 
 
