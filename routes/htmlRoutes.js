@@ -1,8 +1,9 @@
-
+//require path
 const path = require('path');
 
 
-
+//wanted to experiment with using async/await and Promise.all()-wrap everything in try/catch blocks
+//export html routes
 module.exports = async (app) => {
     try {
         const resFile1 = app.get('/', (req, res) => {

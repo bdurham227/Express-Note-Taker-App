@@ -1,4 +1,4 @@
-const fs = require("fs");
+//require express 
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -7,10 +7,10 @@ const path = require("path");
 //-----1) Middleware---------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+//serve up static files
 app.use(express.static(path.join(__dirname, 'public')));
-
+//get our routes
 require('./routes/apiRoutes')(app);
-
 require('./routes/htmlRoutes')(app);
 
 
